@@ -121,6 +121,9 @@ NOTE: structured-data is a managed schema, adding new fields with our https://en
 // see CompleteExampleTest.java
 ----
 
+RELP TLS
+See https://github.com/teragrep/rlp_03/blob/main/src/test/java/com/teragrep/rlp_03/TlsClientTest.java[TlsClientTest.java] on rlp_03 repository.
+
 == General
 === Testing
 * test cases must be executable
