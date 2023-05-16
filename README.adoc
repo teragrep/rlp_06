@@ -115,19 +115,13 @@ NOTE: structured-data is a managed schema, adding new fields with our https://en
 * Retry indefinitely and do not lose messages
 * Processing must not hang indefinitely due to technical issues but rather retry new connection
 
-[source,java]
-----
-// see RelpTest.java
-----
-
-== General
 
 [source,java]
 ----
 // see CompleteExampleTest.java
 ----
 
-
+== General
 === Testing
 * test cases must be executable
 
