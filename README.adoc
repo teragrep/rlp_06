@@ -1,0 +1,139 @@
+= Java syslog-relp Developer Example
+
+== Overview
+Java syslog-relp Developer Example will guide one through design considerations with an actual example using https://www.rfc-editor.org/rfc/rfc5424[syslog] with Reliable Event Logging Protocol https://en.wikipedia.org/wiki/Reliable_Event_Logging_Protocol[RELP] in https://en.wikipedia.org/wiki/Java_(programming_language)[Java] programming language by using Teragrep Java Relp Library https://github.com/teragrep/rlp_01[rlp_01] with optional https://en.wikipedia.org/wiki/Transport_Layer_Security[TLS] encryption and public-key https://en.wikipedia.org/wiki/Public_key_certificate[certificate] verification for reliable record processing in Java applications.
+
+== Background
+Syslog is a record format standard for message logging. It allows separation of the software that produces message records, the system that stores them, and the software that reports and analyzes them.
+
+By using syslog as a record format one can ensure that the records produced are accessible as it is a well defined standard.
+
+RELP is a transport protocol that allows reliable, encrypted and robust transmission of syslog records.
+
+RELP enables one to integrate with multiple syslog based systems as it is a de-facto reliable mechanism for transporting the syslog messages.
+
+These two allow real-time record streaming from an application to an archival and analytics system, such as https://github.com/teragrep/teragrep/[teragrep].
+
+=== Example about application logging
+
+Consider following example: application is producing multiple record streams containing valuable information about:
+
+* requests, including transaction processing
+* authentication
+* authorization
+* session handling
+* functional errors
+* technical errors
+* debugging
+* runtime metric data
+
+All of these are separate record streams from a single application which for example can be handling web-shop orders.
+
+Syslog record format allows capturing all of these into their own streams keeping the origin of the information in the record metadata.
+
+For brief example following records could be seen as examples of the preceding example:
+
+requests
+[source,text]
+<15>1 2023-01-01T00:00:00.123456+00:00 app-server1.example.com web-shop-requests - - - 127.0.0.1 - - [01/Jan/2023:00:00:00 +0300] "GET /webshop/ HTTP/1.1" 200 1995 "https://referer.example.com" "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/113.0"
+
+authentication
+[source,text]
+<15>1 2023-01-01T00:00:00.123456+00:00 app-server1.example.com web-shop-auth - - - {"event": "login", "source": "127.0.0.1:38238", "username": "user1", "authentication method": "password"}
+
+authorization
+[source,text]
+<15>1 2023-01-01T00:00:00.123456+00:00 app-server1.example.com web-shop-authz - - - {"SUBJECT": "user:admin1", "VERB": "ASSUME", "OBJECT": "role:Administrators", "STATUS": "assume-ok"}
+
+session handling
+[source,text]
+<16>1 2023-01-01T00:00:00.123456+00:00 app-server1.example.com web-shop-session - - - login <[user1]>, operation <create>, object_type <session>
+
+functional error
+[source,text]
+<12>1 2023-01-01T00:00:00.123456+00:00 app-server1.example.com web-shop-logic-err - - - Checkout amount negative, calculated as <-100€>. discount coupons given: "2023FREE" by user: "user1" rejecting purchase;
+
+technical error
+[source,text]
+<13>1 2023-01-01T00:00:00.123456+00:00 app-server1.example.com web-shop-tech-err - - - Database connection to 127.0.0.2:3306 timed out.
+
+debugging
+[source,text]
+<17>1 2023-01-01T00:00:00.123456+00:00 app-server1.example.com web-shop-debug - - - Ensuring my code works properly enuf
+
+runtime metric data
+[source,text]
+<17>1 2023-01-01T00:00:00.123456+00:00 app-server1.example.com web-shop-metric - - - "time_taken":348
+
+As seen above syslog is able to capture all of this information as the payload part of the syslog record and still keeping the information as human-readable. Delivery and retention of this kind of information may be essential for the business.
+
+By following this guide, one can ensure that the records, such as above, are properly handled, contain essential metadata and are delivered without loss and in real-time from the application for further processing, such as archival and analytics.
+
+== Ready made application integrations for syslog-relp
+
+For logging use, teragrep ships following libraries which can be used as part of the relevant logging framework:
+
+* Logback https://github.com/teragrep/jla_01[Relp Logging plugin for Logback]
+* Java Util Logging (JUL) https://github.com/teragrep/jla_04[Java Util Logging RELP Handler]
+* Log4j 1.x https://github.com/teragrep/jla_05[Log4j RELP Plugin]
+* Log4j 2.x https://github.com/teragrep/jla_06[Log4j2 RELP Plugin]
+
+They integrate natively with their relevant logging framework by extending the existing capabilities.
+
+NOTE: Ready made libraries work well for the logging use, however for other type of integrations, more control over the syslog record metadata and RELP protocol may be necessary, i.e. to be able to set the timestamp or https://en.wikipedia.org/wiki/Universally_unique_identifier[uuid] of the record being transmitted. For this, see next section.
+
+
+== syslog-relp integration guidelines
+
+=== Syslog
+==== Headers
+* Wrap messages in syslog envelope
+* syslog-hostname must be configurable
+* syslog app-name must be configurable
+
+NOTE: sharing same syslog-hostname and syslog-app names allow parallel deployments of the application to share the same processing rules
+
+[source,java]
+----
+// see SyslogRecordTest.java
+----
+
+==== Structured-data
+* include origin data in syslog structure-data
+* include original uuid in syslog structured-data
+
+NOTE: structured-data is a managed schema, adding new fields with our https://en.wikipedia.org/wiki/Private_enterprise_number[48577] is not a good idea
+
+[source,java]
+----
+// see SyslogRecordWithSDTest.java
+----
+
+== RELP
+
+=== Non-functional requirements
+* Retry indefinitely and do not lose messages
+* Processing must not hang indefinitely due to technical issues but rather retry new connection
+
+[source,java]
+----
+// see RelpTest.java
+----
+
+== General
+
+[source,java]
+----
+// see CompleteExampleTest.java
+----
+
+
+=== Testing
+* test cases must be executable
+
+=== Logging
+* errors (executions) must not be hidden
+
+=== Configuration
+* server port needs to be configurable
+* server address needs to be configurable
