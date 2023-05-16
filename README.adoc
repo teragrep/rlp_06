@@ -10,7 +10,7 @@ By using syslog as a record format one can ensure that the records produced are 
 
 RELP is a transport protocol that allows reliable, encrypted and robust transmission of syslog records.
 
-RELP enables one to integrate with multiple syslog based systems as it is a de-facto reliable mechanism for transporting the syslog messages.
+RELP enables one to integrate with multiple syslog based systems as it is a de-facto reliable mechanism for transporting the syslog messages over network.
 
 These two allow real-time record streaming from an application to an archival and analytics system, such as https://github.com/teragrep/teragrep/[teragrep].
 
