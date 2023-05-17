@@ -1,4 +1,4 @@
-= Java syslog-relp Developer Example
+= Java Syslog-RELP Developer Example
 
 == Overview
 Java syslog-RELP Developer Example project guides through design considerations with an actual example. The example uses https://www.rfc-editor.org/rfc/rfc5424[syslog] with Reliable Event Logging Protocol (https://en.wikipedia.org/wiki/Reliable_Event_Logging_Protocol[RELP]) in https://en.wikipedia.org/wiki/Java_(programming_language)[Java] programming language. 
@@ -79,26 +79,34 @@ By following this guide, you can ensure that records:
 
 == Ready-Made Application Integrations for Syslog-RELP
 
-For logging use, teragrep ships following libraries which can be used as part of the relevant logging framework:
+For logging use, Teragrep ships following libraries:
 
-* Logback https://github.com/teragrep/jla_01[Relp Logging plugin for Logback]
-* Java Util Logging (JUL) https://github.com/teragrep/jla_04[Java Util Logging RELP Handler]
+* https://github.com/teragrep/jla_01[Relp Logging plugin for Logback]
+* https://github.com/teragrep/jla_04[Java Util Logging RELP Handler]
 * Log4j 1.x https://github.com/teragrep/jla_05[Log4j RELP Plugin]
 * Log4j 2.x https://github.com/teragrep/jla_06[Log4j2 RELP Plugin]
 
-They integrate natively with their relevant logging framework by extending the existing capabilities.
+You can use these libraries as part of the relevant logging framework. They integrate with their relevant logging framework by extending existing capabilities.
 
-NOTE: Ready made libraries work well for the logging use, however for other type of integrations, more control over the syslog record metadata and RELP protocol may be necessary, i.e. to be able to set the timestamp or https://en.wikipedia.org/wiki/Universally_unique_identifier[uuid] of the record being transmitted. For this, see next section.
+NOTE: Ready made libraries work well for the logging use. However, you may want more control over the syslog and RELP in other integrations (i.e. send the set the timestamp or https://en.wikipedia.org/wiki/Universally_unique_identifier[uuid] of the record). For this, see the next section.
 
 == Syslog-RELP Integration Guidelines
 
+=== General
+
+* test cases must be executable
+* errors (executions) must not be hidden
+* server port needs to be configurable
+* server address needs to be configurable
+
 === Syslog
+
 ==== Headers
 * Wrap messages in syslog envelope
-* syslog-hostname must be configurable
-* syslog app-name must be configurable
+* Syslog-hostname must be configurable
+* Syslog app-name must be configurable
 
-NOTE: sharing same syslog-hostname and syslog-app names allow parallel deployments of the application to share the same processing rules
+NOTE: Sharing same syslog-hostname and syslog-app names allow parallel deployments of the application to share the same processing rules.
 
 [source,java]
 ----
@@ -106,10 +114,10 @@ NOTE: sharing same syslog-hostname and syslog-app names allow parallel deploymen
 ----
 
 ==== Structured-data
-* include origin data in syslog structure-data
-* include original uuid in syslog structured-data
+* Include origin data in syslog structure-data
+* Include original uuid in syslog structured-data
 
-NOTE: structured-data is a managed schema, adding new fields with our https://en.wikipedia.org/wiki/Private_enterprise_number[48577] is not a good idea
+NOTE: Structured-data is a managed schema. Adding new fields with our https://en.wikipedia.org/wiki/Private_enterprise_number[48577] is not a good idea.
 
 [source,java]
 ----
@@ -119,24 +127,15 @@ NOTE: structured-data is a managed schema, adding new fields with our https://en
 === RELP
 
 ==== Non-functional requirements
-* Retry indefinitely and do not lose messages
-* Processing must not hang indefinitely due to technical issues but rather retry new connection
+
+* Retry always and do not lose messages
+* Processing mustn't hang infinitely due to technical issues, but rather retry new connection
 
 [source,java]
 ----
 // see CompleteExampleTest.java
 ----
 
-RELP TLS
+==== RELP TLS
+
 See https://github.com/teragrep/rlp_03/blob/main/src/test/java/com/teragrep/rlp_03/TlsClientTest.java[TlsClientTest.java] on rlp_03 repository.
-
-== General
-=== Testing
-* test cases must be executable
-
-=== Logging
-* errors (executions) must not be hidden
-
-=== Configuration
-* server port needs to be configurable
-* server address needs to be configurable
