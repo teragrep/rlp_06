@@ -1,18 +1,22 @@
 = Java syslog-relp Developer Example
 
 == Overview
-Java syslog-relp Developer Example will guide one through design considerations with an actual example using https://www.rfc-editor.org/rfc/rfc5424[syslog] with Reliable Event Logging Protocol https://en.wikipedia.org/wiki/Reliable_Event_Logging_Protocol[RELP] in https://en.wikipedia.org/wiki/Java_(programming_language)[Java] programming language by using Teragrep Java Relp Library https://github.com/teragrep/rlp_01[rlp_01] with optional https://en.wikipedia.org/wiki/Transport_Layer_Security[TLS] encryption and public-key https://en.wikipedia.org/wiki/Public_key_certificate[certificate] verification for reliable record processing in Java applications.
+Java syslog-RELP Developer Example project guides through design considerations with an actual example. The example uses https://www.rfc-editor.org/rfc/rfc5424[syslog] with Reliable Event Logging Protocol (https://en.wikipedia.org/wiki/Reliable_Event_Logging_Protocol[RELP]) in https://en.wikipedia.org/wiki/Java_(programming_language)[Java] programming language. 
+
+The project also utilizes Teragrep Java RELP Library (https://github.com/teragrep/rlp_01[rlp_01]). Rlp_01 ensures reliable record processing in Java applications. It uses optional https://en.wikipedia.org/wiki/Transport_Layer_Security[TLS] encryption and public-key https://en.wikipedia.org/wiki/Public_key_certificate[certificate] verification.
 
 == Background
-Syslog is a record format standard for message logging. It allows separation of the software that produces message records, the system that stores them, and the software that reports and analyzes them.
+Syslog is a record format standard for message logging. It allows separation of: 
 
-By using syslog as a record format one can ensure that the records produced are accessible as it is a well defined standard.
+* the software that produces message records, 
+* the system that stores them, and 
+* the software that reports and analyzes them.
 
-RELP is a transport protocol that allows reliable, encrypted and robust transmission of syslog records.
+When you use syslog as a record format, you can ensure the produced records are accessible. 
 
-RELP enables one to integrate with multiple syslog based systems as it is a de-facto reliable mechanism for transporting the syslog messages over network.
+RELP is a transport protocol. It allows reliable, encrypted and robust transmission of syslog records. With RELP, you can integrate with many syslog based systems. The mechanism is reliable for transporting the syslog messages over network.
 
-These two allow real-time record streaming from an application to an archival and analytics system, such as https://github.com/teragrep/teragrep/[teragrep].
+Syslog and RELP allow a real-time record streaming, from an application to an archival and analytics system. Take https://github.com/teragrep/teragrep/[Teragrep] as an example.
 
 === Example about application logging
 
