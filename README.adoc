@@ -20,7 +20,7 @@ Syslog and RELP allow a real-time record streaming, from an application to an ar
 
 === Example about application logging
 
-Consider following example: application is producing multiple record streams containing valuable information about:
+Application is producing many record streams containing valuable information about:
 
 * requests, including transaction processing
 * authentication
@@ -31,49 +31,53 @@ Consider following example: application is producing multiple record streams con
 * debugging
 * runtime metric data
 
-All of these are separate record streams from a single application which for example can be handling web-shop orders.
+All these are separate record streams from a single application. The application could, for example, handle web-shop orders.
 
-Syslog record format allows capturing all of these into their own streams keeping the origin of the information in the record metadata.
+Syslog record format allows capturing all these into their own streams. Meanwhile, the origin of the information is kept in the record metadata.
 
-For brief example following records could be seen as examples of the preceding example:
+=== Example records for preceding example
 
-requests
+*Requests*
 [source,text]
 <15>1 2023-01-01T00:00:00.123456+00:00 app-server1.example.com web-shop-requests - - - 127.0.0.1 - - [01/Jan/2023:00:00:00 +0300] "GET /webshop/ HTTP/1.1" 200 1995 "https://referer.example.com" "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/113.0"
 
-authentication
+*Authentication*
 [source,text]
 <15>1 2023-01-01T00:00:00.123456+00:00 app-server1.example.com web-shop-auth - - - {"event": "login", "source": "127.0.0.1:38238", "username": "user1", "authentication method": "password"}
 
-authorization
+*Authorization*
 [source,text]
 <15>1 2023-01-01T00:00:00.123456+00:00 app-server1.example.com web-shop-authz - - - {"SUBJECT": "user:admin1", "VERB": "ASSUME", "OBJECT": "role:Administrators", "STATUS": "assume-ok"}
 
-session handling
+*Session handling*
 [source,text]
 <16>1 2023-01-01T00:00:00.123456+00:00 app-server1.example.com web-shop-session - - - login <[user1]>, operation <create>, object_type <session>
 
-functional error
+*Functional error*
 [source,text]
 <12>1 2023-01-01T00:00:00.123456+00:00 app-server1.example.com web-shop-logic-err - - - Checkout amount negative, calculated as <-100€>. discount coupons given: "2023FREE" by user: "user1" rejecting purchase;
 
-technical error
+*Technical error*
 [source,text]
 <13>1 2023-01-01T00:00:00.123456+00:00 app-server1.example.com web-shop-tech-err - - - Database connection to 127.0.0.2:3306 timed out.
 
-debugging
+*Debugging*
 [source,text]
 <17>1 2023-01-01T00:00:00.123456+00:00 app-server1.example.com web-shop-debug - - - Ensuring my code works properly enuf
 
-runtime metric data
+*Runtime metric data*
 [source,text]
 <17>1 2023-01-01T00:00:00.123456+00:00 app-server1.example.com web-shop-metric - - - "time_taken":348
 
-As seen above syslog is able to capture all of this information as the payload part of the syslog record and still keeping the information as human-readable. Delivery and retention of this kind of information may be essential for the business.
+As seen above, syslog is able to capture all information. At the same time, the payload part of the record keeps information as human-readable. Delivery and retention of this kind of information is essential for the business.
 
-By following this guide, one can ensure that the records, such as above, are properly handled, contain essential metadata and are delivered without loss and in real-time from the application for further processing, such as archival and analytics.
+By following this guide, you can ensure that records:
 
-== Ready made application integrations for syslog-relp
+* are handled in a proper manner, 
+* contain essential metadata and 
+* are delivered without loss and in real-time from the application for further processing.
+
+== Ready-Made Application Integrations for Syslog-RELP
 
 For logging use, teragrep ships following libraries which can be used as part of the relevant logging framework:
 
@@ -86,8 +90,7 @@ They integrate natively with their relevant logging framework by extending the e
 
 NOTE: Ready made libraries work well for the logging use, however for other type of integrations, more control over the syslog record metadata and RELP protocol may be necessary, i.e. to be able to set the timestamp or https://en.wikipedia.org/wiki/Universally_unique_identifier[uuid] of the record being transmitted. For this, see next section.
 
-
-== syslog-relp integration guidelines
+== Syslog-RELP Integration Guidelines
 
 === Syslog
 ==== Headers
@@ -113,12 +116,11 @@ NOTE: structured-data is a managed schema, adding new fields with our https://en
 // see SyslogRecordWithSDTest.java
 ----
 
-== RELP
+=== RELP
 
-=== Non-functional requirements
+==== Non-functional requirements
 * Retry indefinitely and do not lose messages
 * Processing must not hang indefinitely due to technical issues but rather retry new connection
-
 
 [source,java]
 ----
